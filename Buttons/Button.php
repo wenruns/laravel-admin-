@@ -82,24 +82,30 @@ SCRIPT;
         $url = $item['url'];
         $buttonText = $item['buttonText'];
         $unique = $this->_unique;
-        $slug = $item['slug'];
+        $data = is_array($item['data']) ? json_encode($item['data']) : $item['data'];
         $sign = md5($buttonText);
         $attributes = $item['attributes'];
         return <<<HTML
-<a class="wen-button-$unique $class"  $attributes  style="$style"  href="$url" data-sign="$sign" data-url="$url" data-text="$buttonText" data-slug="$slug">$buttonText</a>
+<a class="wen-button-$unique $class"  $attributes  style="$style"  href="$url" data-sign="$sign" data-url="$url" data-text="$buttonText" data-datas="$data">$buttonText</a>
 HTML;
     }
 
     protected function format($item)
     {
+        // 按钮类
         isset($item['class']) ? '' : $item['class'] = ('btn ' . (isset($item['buttonType']) ? 'btn-' . $item['buttonType'] : 'btn-xs') . (isset($item['buttonStyle']) ? 'btn-' . $item['buttonStyle'] : 'btn-primary'));
+        // 按钮样式
         isset($item['style']) ? '' : $item['style'] = '';
+        // 按钮url
         isset($item['url']) ? '' : $item['url'] = '#';
+        // 按钮文本
         if (!isset($item['buttonText'])) {
             $item['buttonText'] = 'button' . $this->_n;
             $this->_n++;
         }
-        isset($item['slug']) ? '' : $item['slug'] = '';
+        // 附加数据
+        isset($item['data']) ? '' : $item['data'] = '';
+        // 自定义按钮属性
         if (isset($item['attributes'])) {
             if (is_array($item['attributes'])) {
                 $attributes = '';
@@ -111,7 +117,7 @@ HTML;
         } else {
             $item['attributes'] = '';
         }
-
+        // 按钮点击触发事件
         if (isset($item['clickEvent'])) {
             $this->_clickEvents[md5($item['buttonText'])] = $this->compressHtml($item['clickEvent']);
         }
